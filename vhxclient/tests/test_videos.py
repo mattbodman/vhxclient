@@ -32,7 +32,7 @@ class TestMethods(unittest.TestCase):
         video = {
             'title': ''.join([random.choice(string.ascii_letters) for n in xrange(32)]),
             'description': 'A Test Video',
-            'plans': ['free'],
+            'plans': ['free', 'public'],
             'time_available': time_available,
             'time_unavailable': time_unavailable,
             'metadata': {
