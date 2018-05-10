@@ -41,13 +41,11 @@ class VHXClient(object):
 
     def _request(self, uri='', data='', item_id='', method=''):
         if self.site_id:
-            print 'SITE ID', self.site_id
             if isinstance(data, str):
                 data = {'site_id': self.site_id}
             elif isinstance(data, dict):
                 data['site_id'] = self.site_id
         try:
-            print data
             response, body = self._http_client.request('%s/%s/%s' % (self._base_uri, uri, item_id), method,
                                                        json.dumps(data), headers=self._headers)
             status = response.status
