@@ -7,15 +7,17 @@ import string
 import os
 
 TEST_KEY = os.environ.get('VHX_TEST_API_KEY')
+TEST_ID = os.environ.get('VHX_SITE_ID')
 
 
 class TestMethods(unittest.TestCase):
 
     def setUp(self):
-        self.vhx = VHXClient(TEST_KEY)
+        self.vhx = VHXClient(TEST_KEY, TEST_ID)
 
     # all
     def test_list_collections(self):
+        print self.vhx.collections.all()['_embedded']['collections']
         self.assertTrue(self.vhx.collections.all()['_embedded'])
 
     # retrieve
@@ -37,9 +39,10 @@ class TestMethods(unittest.TestCase):
     # update
     def test_update_collection(self):
         collection = self.vhx.collections.all()['_embedded']['collections'][0]
+        print collection
         collection_id = collection['id']
         collection_name = ''.join([random.choice(string.ascii_letters) for n in xrange(32)])
-        self.vhx.collections.update(collection_id, {'name': collection_name})
-        collection = self.vhx.collections.retrieve(collection_id)
+        collection = self.vhx.collections.update(collection_id, {'name': collection_name})
+        #  collection = self.vhx.collections.retrieve(collection_id)
         new_collection_name = collection['name']
         self.assertEqual(collection_name, new_collection_name)

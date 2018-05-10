@@ -10,14 +10,15 @@ from resource import Resource
 
 class VHXClient(object):
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, site_id=None):
+        self.site_id = site_id
         if not api_key.endswith(':'):
             api_key += ':'
         encoded_key = base64.b64encode(api_key)
         self._headers = {
             'Authorization': 'Basic %s' % encoded_key,
             'Content-Type': 'application/json',
-            'cache-control': 'no-cache'
+            'Cache-Control': 'no-cache'
         }
         try:
             self._get('videos')
@@ -39,12 +40,19 @@ class VHXClient(object):
     _base_uri = 'https://api.vhx.tv'
 
     def _request(self, uri='', data='', item_id='', method=''):
+        if self.site_id:
+            print 'SITE ID', self.site_id
+            if isinstance(data, str):
+                data = {'site_id': self.site_id}
+            elif isinstance(data, dict):
+                data['site_id'] = self.site_id
         try:
-            response = self._http_client.request('%s/%s/%s' % (self._base_uri, uri, item_id), method, json.dumps(data),
-                                                 headers=self._headers)
-            status = int(response[0]['status'])
+            print data
+            response, body = self._http_client.request('%s/%s/%s' % (self._base_uri, uri, item_id), method,
+                                                       json.dumps(data), headers=self._headers)
+            status = response.status
             if status in [200, 201, 304]:
-                return json.loads(response[1])
+                return json.loads(body)
             elif status == 401:
                 raise UnauthorizedError
             elif status == 400:

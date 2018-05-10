@@ -8,12 +8,13 @@ from datetime import datetime
 import os
 
 TEST_KEY = os.environ.get('VHX_TEST_API_KEY')
+TEST_ID = os.environ.get('VHX_SITE_ID')
 
 
 class TestMethods(unittest.TestCase):
 
     def setUp(self):
-        self.vhx = VHXClient(TEST_KEY)
+        self.vhx = VHXClient(TEST_KEY, TEST_ID)
 
     # all
     def test_list_videos(self):
