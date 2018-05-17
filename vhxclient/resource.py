@@ -17,3 +17,7 @@ class Resource(object):
 
     def retrieve(self, item_id):
         return self.parent._get(self.resource_type, item_id=item_id)
+
+    #  for adding items to collections
+    def add(self, item_id, data):
+        return self.parent._put(self.resource_type, item_id=item_id, data=data, additional='items')

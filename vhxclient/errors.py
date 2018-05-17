@@ -23,3 +23,11 @@ class NotAcceptableError(Exception):
 
 class InternalServerError(Exception):
     pass
+
+
+class NoIdError(Exception):
+    pass
+
+
+class InvalidReportTypeError(Exception):
+    pass

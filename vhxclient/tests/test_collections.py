@@ -1,10 +1,12 @@
 #!/usr/bin/env python2
-
 import unittest
 from vhxclient import VHXClient
 import random
 import string
+from datetime import datetime
 import os
+from vhxclient.collection import Collection
+from vhxclient.errors import NoIdError, NotFoundError
 
 TEST_KEY = os.environ.get('VHX_TEST_API_KEY')
 TEST_ID = os.environ.get('VHX_SITE_ID')
@@ -15,34 +17,65 @@ class TestMethods(unittest.TestCase):
     def setUp(self):
         self.vhx = VHXClient(TEST_KEY, TEST_ID)
 
-    # all
-    def test_list_collections(self):
-        print self.vhx.collections.all()['_embedded']['collections']
-        self.assertTrue(self.vhx.collections.all()['_embedded'])
+    def test_load_collection_no_id(self):
+        c = Collection(self.vhx)
+        self.assertRaises(NoIdError, c.load)
 
-    # retrieve
-    def test_retrieve_collection(self):
-        collection_id = self.vhx.collections.all()['_embedded']['collections'][0]['id']
-        self.assertEqual(self.vhx.collections.retrieve(collection_id)['id'], collection_id)
+    def test_load_not_found_collection(self):
+        self.assertRaises(NotFoundError, Collection, self.vhx, 'foobar_id')
 
-    # create
-    def test_create_collection(self):
-        collection = {
-            'name': ''.join([random.choice(string.ascii_letters) for n in xrange(32)]),
-            'type': 'series'
-        }
-        new_collection = self.vhx.collections.create(collection)
-        self.assertTrue(new_collection['_links'])
-        self.assertTrue(new_collection['_embedded'])
-        self.assertEqual(new_collection['name'], new_collection['name'])
+    def test_load_collection(self):
 
-    # update
-    def test_update_collection(self):
-        collection = self.vhx.collections.all()['_embedded']['collections'][0]
-        print collection
-        collection_id = collection['id']
-        collection_name = ''.join([random.choice(string.ascii_letters) for n in xrange(32)])
-        collection = self.vhx.collections.update(collection_id, {'name': collection_name})
-        #  collection = self.vhx.collections.retrieve(collection_id)
-        new_collection_name = collection['name']
-        self.assertEqual(collection_name, new_collection_name)
+        attributes = ['_embedded', '_links', 'created_at', 'description', 'files_count', 'geo_available',
+                      'geo_unavailable', 'has_free_videos', 'id', 'is_available', 'is_featured', 'items_count', 'load',
+                      'metadata', 'name', 'plans', 'save', 'seasons_count', 'short_description', 'slug', 'thumbnail',
+                      'type', 'updated_at']
+        c = Collection(self.vhx, 54052)
+        c.load()
+        self.assertEqual(c.name, 'TEST COLLECTION DO NOT DELETE')
+        self.assertEqual(c.description, 'TEST LONG DESCRIPTION DO NOT DELETE')
+        self.assertEqual([a for a in attributes if not a.startswith('_')], [a for a in dir(c) if not a.startswith('_')])
+
+    def test_save_collection_no_type(self):
+        c = Collection(self.vhx)
+        self.assertRaises(Exception, c.save)
+
+    def test_save_collection_new(self):
+        c = Collection(self.vhx)
+        name = ''.join([random.choice(string.ascii_letters) for n in range(32)])
+        c.name = name
+        c.type = 'series'
+        c.description = 'A Test Description for %s' % c.name
+        c.plans = ['free', 'public']
+        c.time_available = datetime(2018, 1, 1)
+        c.time_unavailable = datetime(2018, 1, 31)
+        c.metadata = {
+                'rating': 'G',
+                'language': 'EN',
+                'country': 'AU',
+                'cast': ['Jeff Goldblum', 'Ryan Gosling'],
+                'release_year': 2000,
+                'director': ['Wes Anderson'],
+                'guests': ['Foo', 'Bar']
+            }
+        c.save()
+        self.assertTrue(c.id)
+        self.assertEqual(c.name, name)
+
+    def test_save_collection_existing(self):
+        short_description = ''.join([random.choice(string.ascii_letters) for n in xrange(32)])
+        c = Collection(self.vhx, 54052)
+        c.thumbnail_url = 'https://image.tmdb.org/t/p//original//yatxjpSxWREk1SwAivvc5hlEZqJ.jpg'
+        c.short_description = short_description
+        c.save()
+        self.assertEqual(c.short_description, short_description)
+
+    def test_save_new_season(self):
+        c = Collection(self.vhx)
+        c.type = 'season'
+        c.name = 'A TEST SEASON'
+        c.thumbnail_url = 'https://image.tmdb.org/t/p//original//egPM9Lrlm6h2wHRpJkyRux2psqi.jpg'
+        c.season_number = 1
+        c.series_id = 54052
+        c.save()
+        self.assertTrue(c.id)

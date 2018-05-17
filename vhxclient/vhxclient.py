@@ -1,11 +1,9 @@
 #!/usr/bin/env python2
-
 import base64
 import httplib2
 import json
 from errors import NotFoundError, InternalServerError, NotAcceptableError, PaymentRequiredError, BadRequestError, \
     UnauthorizedError
-from resource import Resource
 
 
 class VHXClient(object):
@@ -21,33 +19,20 @@ class VHXClient(object):
             'Cache-Control': 'no-cache'
         }
         try:
-            self._get('videos')
+            # self._get('videos')
+            pass
         except Exception:
             raise
-        for resource in [
-            'products',
-            'customers',
-            'watchlist',
-            'videos',
-            'collections',
-            'authorizations',
-            'analytics'
-        ]:
-            setattr(self, resource, Resource(self, resource))
 
     _http_client = httplib2.Http()
 
     _base_uri = 'https://api.vhx.tv'
 
-    def _request(self, uri='', data='', item_id='', method=''):
-        if self.site_id:
-            if isinstance(data, str):
-                data = {'site_id': self.site_id}
-            elif isinstance(data, dict):
-                data['site_id'] = self.site_id
+    def request(self, uri='', method='', data=''):
+        print uri
         try:
-            response, body = self._http_client.request('%s/%s/%s' % (self._base_uri, uri, item_id), method,
-                                                       json.dumps(data), headers=self._headers)
+            response, body = self._http_client.request('%s/%s' % (self._base_uri, uri),
+                                                       method, json.dumps(data), headers=self._headers)
             status = response.status
             if status in [200, 201, 304]:
                 return json.loads(body)
@@ -66,11 +51,13 @@ class VHXClient(object):
         except Exception:
             raise
 
-    def _get(self, uri='', data='', item_id=''):
-        return self._request(uri=uri, item_id=item_id, data=data, method='GET')
+    def list(self, item, query='', sort=''):
+        if item == 'collections' and sort and sort not in ['alphabetical', 'newest', 'oldest', 'latest']:
+            raise Exception('"sort" must be on of "alphabetical", "newest", "oldest", or "latest"')
+        if item == 'videos' and sort and sort not in ['alphabetical', 'newest', 'oldest', 'plays', 'finishes',
+                                                      'duration']:
+            raise Exception('"sort" must be on of "alphabetical", "newest", "oldest", "plays", "finishes"'
+                            ' or "duration"')
 
-    def _post(self, uri='', data=''):
-        return self._request(uri=uri, data=data, method='POST')
-
-    def _put(self, uri='', item_id='', data=''):
-        return self._request(uri=uri, item_id=item_id, data=data, method='PUT')
+        response = self.request('/%s?query=%s' % (item, query), 'GET')
+        return response
