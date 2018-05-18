@@ -21,8 +21,8 @@ old_vid.save()  # loads the response back into the object
 
 # collections work the same way
 
-# list videos and collections like this
-vhx.list('collections')
+# list collections like this
+vhx.list('collections', <site_id>)  # site_id is required when getting Collections to workaround known Vimeo caching bug
 vhx.list('videos')
 ```
 
