@@ -18,12 +18,18 @@ class TestMethods(unittest.TestCase):
     def test_connection(self):
         self.assertTrue(self.vhx.__class__.__name__ == 'VHXClient')
 
+    def test_client_no_api_key(self):
+        self.assertRaises(Exception, VHXClient)
+
     def test_connection_error(self):
         vhx = VHXClient('bogus_api_key')
         self.assertRaises(UnauthorizedError, Video, vhx, 'foobar')
 
     def test_list_no_item(self):
         self.assertRaises(Exception, self.vhx.list)
+
+    def test_collection_list_no_site_id(self):
+        self.assertRaises(Exception, self.vhx.list, 'collection')
 
     def test_list(self):
         r = self.vhx.list('collections')

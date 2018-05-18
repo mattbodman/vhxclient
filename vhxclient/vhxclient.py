@@ -9,6 +9,8 @@ from errors import NotFoundError, InternalServerError, NotAcceptableError, Payme
 class VHXClient(object):
 
     def __init__(self, api_key, site_id=None):
+        if not api_key:
+            raise Exception('api_key is required')
         self.site_id = site_id
         if not api_key.endswith(':'):
             api_key += ':'
@@ -52,8 +54,11 @@ class VHXClient(object):
             raise
 
     def list(self, item, query='', sort=''):
-        if item == 'collections' and sort and sort not in ['alphabetical', 'newest', 'oldest', 'latest']:
-            raise Exception('"sort" must be on of "alphabetical", "newest", "oldest", or "latest"')
+        if item == 'collections':
+            if not self.site_id:
+                raise Exception('getting a list of collections requires the site_id')
+            if sort and sort not in ['alphabetical', 'newest', 'oldest', 'latest']:
+                raise Exception('"sort" must be on of "alphabetical", "newest", "oldest", or "latest"')
         if item == 'videos' and sort and sort not in ['alphabetical', 'newest', 'oldest', 'plays', 'finishes',
                                                       'duration']:
             raise Exception('"sort" must be on of "alphabetical", "newest", "oldest", "plays", "finishes"'
