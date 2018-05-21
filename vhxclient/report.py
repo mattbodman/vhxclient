@@ -28,5 +28,6 @@ class Report(object):
         for k in response.keys():
             setattr(self, k, response[k])
 
+    @property
     def json(self):
         return {k: v for k, v in self.__dict__.items() if not k.startswith('_') and k not in ['json']}
