@@ -1,5 +1,4 @@
 #!/usr/bin/env python2
-from datetime import datetime
 from errors import InvalidReportTypeError, NoIdError
 
 
@@ -28,4 +27,6 @@ class Report(object):
             response = self._client.request('/analytics?type=%s&video_id=%s' % (self.type, video_id), 'GET')
         for k in response.keys():
             setattr(self, k, response[k])
-        print dir(self)
+
+    def json(self):
+        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}

@@ -31,3 +31,6 @@ class Video(object):
             response = self._client.request('/videos/%s' % self.id, 'PUT', data)
         for k in response.keys():
             setattr(self, k, response[k])
+
+    def json(self):
+        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}

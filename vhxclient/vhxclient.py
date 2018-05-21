@@ -31,7 +31,6 @@ class VHXClient(object):
     _base_uri = 'https://api.vhx.tv'
 
     def request(self, uri='', method='', data=''):
-        print uri
         try:
             response, body = self._http_client.request('%s/%s' % (self._base_uri, uri),
                                                        method, json.dumps(data), headers=self._headers)
