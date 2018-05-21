@@ -30,4 +30,5 @@ class Report(object):
 
     @property
     def json(self):
-        return {k: v for k, v in self.__dict__.items() if not k.startswith('_') and k not in ['json']}
+        omitted_attributes = ['_client', 'json']
+        return {k: v for k, v in self.__dict__.items() if k not in omitted_attributes}
