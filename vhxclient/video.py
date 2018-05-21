@@ -33,4 +33,4 @@ class Video(object):
             setattr(self, k, response[k])
 
     def json(self):
-        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+        return {k: v for k, v in self.__dict__.items() if not k.startswith('_') and k not in ['json']}

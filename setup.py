@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='vhxclient',
-      version='1.2',
+      version='1.3',
       description='A Python Client for the VHX API',
       url='https://github.com/mattbodman/vhxclient',
       author='Matt Bodman',
