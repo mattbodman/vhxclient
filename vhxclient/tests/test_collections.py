@@ -27,9 +27,9 @@ class TestMethods(unittest.TestCase):
     def test_load_collection(self):
 
         attributes = ['_embedded', '_links', 'created_at', 'description', 'files_count', 'geo_available',
-                      'geo_unavailable', 'has_free_videos', 'id', 'is_available', 'is_featured', 'items_count', 'load',
-                      'metadata', 'name', 'plans', 'save', 'seasons_count', 'short_description', 'slug', 'thumbnail',
-                      'type', 'updated_at']
+                      'geo_unavailable', 'has_free_videos', 'id', 'is_available', 'is_featured', 'items_count', 'json',
+                      'load', 'metadata', 'name', 'plans', 'save', 'seasons_count', 'short_description', 'slug',
+                      'thumbnail', 'type', 'updated_at']
         c = Collection(self.vhx, 54052)
         c.load()
         self.assertEqual(c.name, 'TEST COLLECTION DO NOT DELETE')

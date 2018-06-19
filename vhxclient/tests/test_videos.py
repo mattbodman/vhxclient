@@ -32,9 +32,9 @@ class TestMethods(unittest.TestCase):
 
         attributes = ['_embedded', '_links', 'advertising', 'capabilities', 'created_at', 'description', 'drm',
                       'duration', 'finishes_count', 'geo_available', 'geo_unavailable', 'id', 'is_available',
-                      'is_commenting_enabled', 'is_free', 'live_status', 'live_video', 'load', 'metadata', 'name',
-                      'plans', 'plays_count', 'save', 'scheduled_at', 'short_description', 'status', 'thumbnail',
-                      'time_available', 'time_unavailable', 'title', 'tracks', 'type', 'updated_at']
+                      'is_commenting_enabled', 'is_free', 'json', 'live_status', 'live_video', 'load', 'metadata',
+                      'name', 'plans', 'plays_count', 'save', 'scheduled_at', 'short_description', 'status',
+                      'thumbnail', 'time_available', 'time_unavailable', 'title', 'tracks', 'type', 'updated_at']
         v = Video(self.vhx, 277568)
         v.load()
         self.assertEqual(v.title, 'TEST VIDEO DO NOT DELETE')
@@ -66,7 +66,8 @@ class TestMethods(unittest.TestCase):
     # update
     def test_save_video_existing(self):
         short_description = ''.join([random.choice(string.ascii_letters) for n in xrange(32)])
-        v = Video(self.vhx, 277568)
+        v = Video(self.vhx, 284037)
         v.short_description = short_description
         v.save()
+        self.assertEqual(1, 2)
         self.assertEqual(v.short_description, short_description)

@@ -27,8 +27,10 @@ class Video(object):
                 data[k] = v.isoformat()
         if not self.id:
             response = self._client.request('/videos', 'POST', data)
+            print 'FROM POST', response
         else:
             response = self._client.request('/videos/%s' % self.id, 'PUT', data)
+            print 'FROM PUT', response
         for k in response.keys():
             setattr(self, k, response[k])
 
