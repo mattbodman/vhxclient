@@ -69,5 +69,4 @@ class TestMethods(unittest.TestCase):
         v = Video(self.vhx, 284037)
         v.short_description = short_description
         v.save()
-        self.assertEqual(1, 2)
         self.assertEqual(v.short_description, short_description)

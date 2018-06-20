@@ -11,3 +11,5 @@
 .idea*
 
 /venv/
+
+api_key.ini
